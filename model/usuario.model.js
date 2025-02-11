@@ -4,7 +4,7 @@ const usuarioSchema = Schema({
     nombre_usuario: {type: String}, 
     contrasena: {type: String}, 
     email: {type: String}, 
-    fecha_creacion: {type: String},  
+    fecha_creacion: {type: Date},  
     estado: {type: [String], enum: ['Activo','Inactivo'], default:[] },  
     id_persona: {type: Schema.Types.ObjectId, ref: 'Persona'} 
 });

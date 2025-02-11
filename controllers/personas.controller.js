@@ -212,7 +212,7 @@ const eliminarPersona = async(req, res = response ) => {
 
         res.json({
             ok: true,
-            msg: 'Usuario eliminado !'
+            msg: 'Registro eliminado !'
         })
     } catch (error) {
         console.log(error);
