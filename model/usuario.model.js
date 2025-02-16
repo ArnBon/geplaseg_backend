@@ -9,7 +9,7 @@ const usuarioSchema = Schema({
     id_persona: {type: Schema.Types.ObjectId, ref: 'Persona'} 
 });
 
-// usuarioSchema.methos('toJson', function(){
+// usuarioSchema.method('toJson', function(){
 //     const{ __v, _id, ...object} = this.toObject();
 //     object.uid = _id;
 //     return object;

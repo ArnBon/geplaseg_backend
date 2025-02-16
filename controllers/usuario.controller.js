@@ -1,12 +1,41 @@
 const { response } = require('express');
 const Usuario = require('../model/usuario.model');
 
-const getUsuario = async (req, res = response) => {
-    const usuario = await Usuario.find({}, 'nombre_usuario contrasena  email  fecha_creacion estado');           
+const getUsuario = async (req, res) => {
+try {
+     // Obtener todas los usuarios con los campos deseados
+    const usuario = await Usuario.find({}, 'nombre_usuario contrasena email fecha_creacion estado');           
+    
+    // Función para formatear la fecha
+         formatearFecha = (fecha) => {
+            const dia = String(fecha.getDate()).padStart(2, '0');
+            const mes = String(fecha.getMonth() + 1).padStart(2, '0'); // Los meses son 0-indexados
+            const anio = fecha.getFullYear();
+            return `${dia}-${mes}-${anio}`;
+        };
+
+        // Formatear la fecha de creacion para cada persona
+        const usuarioResponse = usuario.map(usuario => ({
+            ...usuario.toObject(), // Convierte el documento a un objeto simple
+            fecha_creacion: formatearFecha(usuario.fecha_creacion) // Formatea la fecha
+        }));
+    
     res.json({
             ok:true,
-            usuario        
+            usuario: usuarioResponse  // Devuelve la lista de personas con fechas formateadas      
     });
+    
+} catch (error) {
+    console.error(error);
+    res.status(500).json({
+        ok:false,
+        msg: 'Error al obtener usuarios.'
+    });
+    
+}
+
+    
+    
 }
 
     const getUsuarioId = (req, res = response)=> {
@@ -33,6 +62,15 @@ const getUsuario = async (req, res = response) => {
     }*/
     
     const crearUsuario = async (req, res = response) => {
+        
+        const { fecha_creacion } = req.body;
+
+        // Convertir la fecha de creacion de dd-mm-yyyy a un objeto Date
+    if (fecha_creacion) {
+        const [dia, mes, anio] = fecha_creacion.split('-');
+        req.body.fecha_creacion = new Date(`${anio}-${mes}-${dia}`);
+    }
+
 
         const usuario = new Usuario(req.body);
 
@@ -123,6 +161,37 @@ const getUsuario = async (req, res = response) => {
             });            
         }
     }
+
+    /*creamos una funcion para valdiar que la fecha sea la correcta */
+function validarFecha(fecha) {
+    // Expresión regular para validar el formato dd-mm-yyyy
+    const regex = /^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-(\d{4})$/;
+
+    // Verifica si el formato es correcto
+    if (!regex.test(fecha)) {
+        return false; // Formato incorrecto
+    }
+
+    // Extraer día, mes y año
+    const [dia, mes, anio] = fecha.split('-').map(Number);
+
+    // Crear un objeto Date para verificar si la fecha es válida
+    const fechaObj = new Date(anio, mes - 1, dia); // mes - 1 porque los meses empiezan desde 0
+
+    // Comprobar si la fecha construida coincide con la original
+    return fechaObj.getFullYear() === anio && 
+           fechaObj.getMonth() === (mes - 1) && 
+           fechaObj.getDate() === dia;
+}
+
+function formatearFecha(fecha) {
+    const dia = String(fecha.getDate()).padStart(2, '0'); // Obtiene el día y lo formatea
+    const mes = String(fecha.getMonth() + 1).padStart(2, '0'); // Obtiene el mes (0-11) y lo formatea
+    const anio = fecha.getFullYear(); // Obtiene el año
+
+    return `${dia}-${mes}-${anio}`; // Retorna la fecha en formato dd-mm-yyyy
+}
+
 
 
 module.exports = {

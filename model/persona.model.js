@@ -18,7 +18,7 @@ personaSchema.method('toJSON', function(){
     const { __v, _id, ...object } = this.toObject();
     object.pid = _id;
     return object;
-})
+});
 
 module.exports = model('Persona', personaSchema );
 
