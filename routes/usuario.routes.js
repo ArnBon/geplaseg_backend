@@ -7,7 +7,7 @@ const { validarJWT } = require('../middlewares/validarjwt');
 
 const router = Router();
 
-router.get('/', getUsuario);
+router.get('/', validarJWT, getUsuario);
 router.get('/:id', getUsuarioId);
 router.post('/', 
     [
@@ -22,13 +22,14 @@ router.post('/',
 
 router.put('/:id', 
     [
+    validarJWT,
     check('nombre_usuario', 'El campo Nombre de Usuario es obligatorio').not().isEmpty(), 
     check('email', 'El campo Email es obligatorio').not().isEmpty(),
     check('estado', 'El campo estado es obligatorio').not().isEmpty(),
     validarCampos, 
     ],    
     actualizarUsuario);
-router.delete('/:id', eliminarUsuario);
+router.delete('/:id', validarJWT, eliminarUsuario);
 
 
 module.exports = router;
