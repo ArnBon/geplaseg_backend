@@ -6,7 +6,8 @@ const usuarioSchema = Schema({
     email: {type: String}, 
     fecha_creacion: {type: Date},  
     estado: {type: [String], enum: ['Activo','Inactivo'], default:[] },  
-    id_persona: {type: Schema.Types.ObjectId, ref: 'Persona'} 
+    id_persona: {type: Schema.Types.ObjectId, ref: 'Persona'},
+    roles: [{ type: Schema.Types.ObjectId, ref: 'Rol' }], // Relación muchos a muchos con Roles 
 });
 
 // usuarioSchema.method('toJson', function(){

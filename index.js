@@ -29,6 +29,10 @@ app.use('/api/personas', require('./routes/personas.routes') )
 app.use('/api/generos', require('./routes/generos.routes') )
 app.use('/api/usuarios', require('./routes/usuario.routes') )
 app.use('/api/login', require('./routes/auth.routes'))
+app.use('/api/roles', require('./routes/roles.routes'))
+app.use('/api/permisos', require('./routes/permisos.routes'))
+
+
 
 
 // app.get('/api/generos', (req, res) => {

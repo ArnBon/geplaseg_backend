@@ -29,6 +29,8 @@ router.put('/:id',
     validarCampos, 
     ],    
     actualizarUsuario);
+
+    
 router.delete('/:id', validarJWT, eliminarUsuario);
 
 
