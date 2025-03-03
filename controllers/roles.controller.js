@@ -77,8 +77,7 @@ const editarRol = async(req, res) => {
         res.status(500).json({
             ok:false,
             msg: 'Error al editar el rol'
-        })
-        
+        })        
     }
 } 
 

@@ -24,13 +24,17 @@ app.listen(process.env.PORT, () => {
     console.log('Servidor corriendo en puerto ' + process.env.PORT);
 });
 
-// 4.- Se crea las Rutas
+// 4.- Se crean las Rutas
 app.use('/api/personas', require('./routes/personas.routes') )
 app.use('/api/generos', require('./routes/generos.routes') )
 app.use('/api/usuarios', require('./routes/usuario.routes') )
 app.use('/api/login', require('./routes/auth.routes'))
 app.use('/api/roles', require('./routes/roles.routes'))
 app.use('/api/permisos', require('./routes/permisos.routes'))
+
+app.use('/api/asignar_rol', require('./routes/asignar_rol.routes'))
+app.use('/api/asignar_permisos', require('./routes/asignar_permisos.routes'))
+
 
 
 

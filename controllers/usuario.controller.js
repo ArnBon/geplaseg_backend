@@ -1,7 +1,10 @@
 const { response } = require('express');
-const Usuario = require('../model/usuario.model');
 const bcrypt = require('bcryptjs');
+
+const Usuario = require('../model/usuario.model');
+const Rol = require('../model/roles.model');
 const { generarJWT } = require('../helpers/jwt');
+
 
 const getUsuario = async (req, res) => {
 try {
@@ -49,6 +52,44 @@ try {
     });
     }
 
+    const getUsuarioRolPermisos = async (req, res = response) => {
+    // Obtener el ID del usuario de los parámetros de la URL es decir ese id
+    //sale de la ruta que puse en /usuariorolpermiso/:id/ -> este id
+    const { id } = req.params;  
+
+    try {
+        // Buscar el usuario y poblar los roles y permisos
+        const usuario = await Usuario.findById(id)
+            .populate({
+                path: 'roles', // Poblar los roles
+                populate: {
+                    path: 'permisos', // Dentro de cada rol, poblar los permisos
+                    model: 'Permiso', // Especificar el modelo de Permiso
+                },
+            });
+
+        if (!usuario) {
+            return res.status(404).json({
+                ok: false,
+                msg: 'Usuario no encontrado',
+            });
+        }
+
+        res.json({
+            ok: true,
+            usuario,
+        });
+    } catch (error) {
+        console.error('Error al obtener el usuario:', error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error al obtener el usuario',
+            error,
+        });
+    }
+};
+
+
    /* const crearUsuario = async (req, res = response) => {
          
             console.log(req.body);
@@ -65,23 +106,43 @@ try {
     
     const crearUsuario = async (req, res = response) => {
 
-        const { nombre_usuario, contrasena, email, estado } = req.body;
-        
+        const { nombre_usuario, contrasena, email, estado, roles } = req.body;        
         const { fecha_creacion } = req.body;
 
+      try {
         // Convertir la fecha de creacion de dd-mm-yyyy a un objeto Date
     if (fecha_creacion) {
         const [dia, mes, anio] = fecha_creacion.split('-');
         req.body.fecha_creacion = new Date(`${anio}-${mes}-${dia}`);
-    }
-        const usuario = new Usuario(req.body);
+    } 
+    
+    //Verificar si el rol existe usando la funcion validarRolExiste
+    //const rid = await validarRolExiste(roles); // Llama a la función y obtén el ID del rol
+    
+    // Verificar si el rol existe (opcional, solo si necesitas validar)
+    // Si ya tienes el ID del rol, puedes omitir esta validación
+        if (roles) {
+            const rolExistente = await Rol.findById(roles); // Busca el rol por ID
+            if (!rolExistente) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'El rol especificado no existe',
+                });
+            }
+        }    
+    
+    // Crear usuario
+    const usuario = new Usuario({
+        ...req.body,
+        roles: roles ? [roles]: [],
+    });
 
         // Encriptar contraseña
         const salt = bcrypt.genSaltSync();
         usuario.contrasena = bcrypt.hashSync( contrasena, salt );
 
-        try {
-            await usuario.save();
+        // Guardar el usuario en la bd
+        await usuario.save();
 
         //3.- Generar el token
         const token = await generarJWT(usuario.id);
@@ -207,6 +268,7 @@ function formatearFecha(fecha) {
 module.exports = {
     getUsuario,
     getUsuarioId,
+    getUsuarioRolPermisos,
     crearUsuario,
     actualizarUsuario,
     eliminarUsuario
