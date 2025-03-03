@@ -6,7 +6,7 @@ const Rol = require('../model/roles.model');
 const { generarJWT } = require('../helpers/jwt');
 
 
-const getUsuario = async (req, res) => {
+/*const getUsuario = async (req, res) => {
 try {
      // Obtener todas los usuarios con los campos deseados
     const usuario = await Usuario.find({}, 'nombre_usuario contrasena email fecha_creacion estado');           
@@ -39,8 +39,40 @@ try {
     
 }
 
+
     
     
+}*/
+
+const getUsuario = async(req, res = response) => {
+    const desde = Number (req.query.desde) || 0;
+
+    const [usuario, total] = await Promise.all([
+        Usuario
+        .find({}, 'nombre_usuario contrasena email fecha_creacion estado')
+        .skip(desde)
+        .limit(3),
+        Usuario.countDocuments()
+    ]);
+
+    // Función para formatear la fecha
+         formatearFecha = (fecha) => {
+            const dia = String(fecha.getDate()).padStart(2, '0');
+            const mes = String(fecha.getMonth() + 1).padStart(2, '0'); // Los meses son 0-indexados
+            const anio = fecha.getFullYear();
+            return `${dia}-${mes}-${anio}`;
+        };
+
+        // Formatear la fecha de creacion para cada persona
+        const usuarioResponse = usuario.map(usuario => ({
+            ...usuario.toObject(), // Convierte el documento a un objeto simple
+            fecha_creacion: formatearFecha(usuario.fecha_creacion) // Formatea la fecha
+        }));
+    
+    res.json({
+            ok:true,
+            usuario: usuarioResponse  // Devuelve la lista de personas con fechas formateadas      
+    });
 }
 
     const getUsuarioId = (req, res = response)=> {
