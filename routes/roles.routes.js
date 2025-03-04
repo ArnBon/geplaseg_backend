@@ -2,7 +2,7 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
 const { getRoles, getRolesId, crearRol, editarRol, eliminarRol } = require('../controllers/roles.controller');
-const {validarCampos, validarRol, validarPermiso} = require('../middlewares/validarcampos');
+const {validarCampos, validarRol} = require('../middlewares/validarcampos');
 
 
 
@@ -15,8 +15,8 @@ router.post('/',
       check('nombre_rol', 'El campo Nombre de Usuario es obligatorio').not().isEmpty(), 
       check('descripcion', 'El campo Contraseña es obligatorio').not().isEmpty(),
       validarCampos,
-      validarRol,
-      validarPermiso 
+      validarRol
+       
     ],
     crearRol);
 
@@ -24,9 +24,7 @@ router.put('/:id',
     [
      check('nombre_rol', 'El campo Nombre de Usuario es obligatorio').not().isEmpty(), 
      check('descripcion', 'El campo Contraseña es obligatorio').not().isEmpty(),
-     validarCampos,
-     validarRol,
-     validarPermiso 
+     validarCampos
     ],
 editarRol);
 
