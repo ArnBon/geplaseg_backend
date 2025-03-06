@@ -25,12 +25,7 @@ const asignarPermisoRol = async(req, res = response) => {
                     ok: false,
                     msg: 'El permiso no existe'
                 });                
-            } else {
-                return res.status(200).json({
-                    ok: true,
-                    msg: 'Permiso otorgado'
-                });                
-            }
+            } 
 
 
         //3 Asignar los permisos al rol

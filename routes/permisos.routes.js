@@ -11,6 +11,7 @@ const router = Router();
 router.get('/', getPermisos);
 router.get('/:id', getPermisosId);
 
+// Aplicar el middleware de auditoría a todas las rutas excepto GET
 router.use((req, res, next) => {
   if (req.method !== 'GET') {
    auditmiddleware(req, res, next);
@@ -18,7 +19,7 @@ router.use((req, res, next) => {
     next();    
   }
 });
-
+//
 
 router.post('/', 
     [

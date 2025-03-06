@@ -4,6 +4,7 @@
  const Rol = require('../model/roles.model'); 
  const Permiso = require('../model/permiso.model');  
 
+ //Validacion para que los campos no queden vacios
 const validarCampos = (req, res = response, next ) => {
 
     const errores = validationResult(req);
